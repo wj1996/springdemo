@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd">
+    <!--
+        xmlns:context="http://www.springframework.org/schema/context" IOC注解方式实现 引入
+    -->
+    <bean id="accountService" class="com.wj02.service.impl.AccountServiceImpl"></bean>
+    <bean id="accountDao" class="com.wj02.dao.impl.AccountDaoImpl" />
+    <!--spring对bean的管理细节
+        1.创建bean的三种方式
+        2.bean对象的作用范围
+        3.bean对象的生命周期
+    -->
+    <!--创建bean的三种方式-->
+    <!--第一种方式：使用默认的构造函数创建
+        在spring中使用bean标签，配置id和class属性
+        采用的就是使用默认构造函数构造，如果没有默认午参构造，则不能创建
+    -->
+    <bean id="accountService03" class="com.wj03.service.impl.AccountServiceImpl" />
+    <!--第二种方式，使用普通工厂中的方法创建对象（使用某个类中的方法创建对象），并存入spring容器-->
+    <bean id="instanceMyFactory" class="com.wj03.factory.MyFactory" />
+    <bean id="accountService03-1" factory-bean="instanceMyFactory" factory-method="instance" />
+    <!--第三种方式：使用工厂中的静态方法创建对象（使用某个类中的静态方法创建对象，并存入spring容器）-->
+    <bean id="accountService03-2" class="com.wj03.factory.MyFactory" factory-method="instanceStatic" />
+    <!--
+        bean的作用范围
+        bean标签的scope属性
+            singleton:单例（默认）
+            prototype：多例
+            request：作用于web应用的请求范围
+            session：作用于web应用的session回话范围
+            global-session：作用于集群环境的回话范围，不是集群环境，就是session。
+    -->
+    <!--
+        bean对象的生命周期
+        对应两个属性，init-method destroy-method
+        单例对象：
+            出生：容器创建时出生
+            活着：只要容器在，就一直活着
+            死亡：容器销毁，对象死亡
+        多例对象：
+            出生：当使用对象时创建
+            活着：
+            死亡：什么时间死亡，spring是不会知道的，对象长时间不被使用，被java gc回收掉
+    -->
+    <bean id = "accountService03-3" class="com.wj03.service.impl.AccountServiceImpl" init-method="init" destroy-method="destroy" scope="prototype" />
+
+    <!--spring中的依赖注入
+        Dependency Injection
+        IOC的作用：降低程序间的依赖关系（耦合）
+        依赖关系的管理以后都交给了spring来维护
+        在当前类中需要使用其他类的对象，由spring为我们提供，只需要在配置文件中说明
+        依赖关系的维护就叫做依赖注入
+        依赖注入：
+            能注入的类型（有三种）：
+                1.基本类型和String
+                2.其它bean类型
+                3、复杂类型/集合类型
+            注入的方式（有三种）：
+                1、构造函数注入
+                2、使用set方法注入
+                3、使用注解注入
+    -->
+    <!--
+        构造函数注入
+        使用标签constructor-arg
+        标签属性：
+            type：指定要注入的数据的数据类型，该数据类型也是构造函数中某个或某些参数的类型
+            index：用于指定注入的数据在构造函数中索引位置的参数赋值，索引的位置从0开始
+            name：用于指定给构造函数中指定名称的参数赋值
+            value：给基本类型和String类型赋值
+            ref：其它的bean类型，指的是在spring的IOC核心容器中出现过的bean对象
+        优势：
+            在获取bean对象时，注入数据是必须的操作，否则无法成功创建对象
+        劣势：
+            改了bean对象的实例化方式，如果用不到这些数据，也必须提供
+    -->
+    <bean id="accountService04" class="com.wj04.service.impl.AccountServiceImpl">
+        <constructor-arg name="name" value="test"></constructor-arg>
+        <constructor-arg name="age" value="12"></constructor-arg>
+        <!--<constructor-arg name="birthday" value="1970-05-14"></constructor-arg>-->  <!--是不能这样转日期的-->
+        <constructor-arg name="birthday" ref="now"></constructor-arg>
+    </bean>
+    <!--配置一个日期对象-->
+    <bean id="now" class="java.util.Date" />
+
+    <!--
+        set方法注入                       常用
+            标签：property
+                属性：
+                    name：用于指定注入时所调用的set方法的名称
+                    value：
+                    ref：
+         优势：
+            创建对象时没哟明确的限制，可以直接使用默认构造函数
+         劣势：
+            如果某个成员必须有值，则获取对象必须调用set方法
+    -->
+    <bean id="accountService04-1" class="com.wj04.service.impl.AccountServiceImpl">
+        <property name="name" value="test2" />
+        <property name="age" value="12" />
+        <property name="birthday" ref="now" />
+    </bean>
+    <!--
+        复杂类型（集合类型）注入
+        用于给List集合注入的标签，array，list,set
+        用于给Map集合注入的标签，entry，props
+    -->
+
+    <bean id="accountService04-2" class="com.wj04.service.impl.AccountServiceImpl">
+        <property name="myStr">
+            <array>
+                <value>aa</value>
+                <value>bb</value>
+                <value>cc</value>
+            </array>
+        </property>
+        <property name="myList">
+            <list>
+                <value>aa</value>
+                <value>bb</value>
+                <value>cc</value>
+            </list>
+        </property>
+        <property name="mySet">
+            <set>
+                <value>aa</value>
+                <value>bb</value>
+                <value>cc</value>
+            </set>
+        </property>
+        <property name="myMap">
+            <map>
+                <entry key="key1" value="value1" />
+                <entry key="key2">
+                    <value>value2</value>
+                </entry>
+            </map>
+        </property>
+        <property name="myProps">
+            <props>
+                <prop key="key1">value1</prop>
+                <prop key="key2">value2</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!--基于注解的IOC开发-->
+    <!--告知spring在创建容器时要扫描的包，配置所需要的标签不是在beans的约束中，而是一个名称为context
+    名称空间和约束中-->
+    <context:component-scan base-package="com.wj05" />
+    <bean id="accountDao5-2" class="com.wj05.dao.impl.AccountDaoImpl" />
+</beans>
