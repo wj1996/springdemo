@@ -14,5 +14,7 @@ public class Client {
         IAccountDao accountDao = (IAccountDao) applicationContext.getBean("accountDao05");
         System.out.println(accountDao);
         accountService.saveAccount();
+
+        ((ClassPathXmlApplicationContext) applicationContext).close();
     }
 }

@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import java.util.*;
 
 /**
@@ -31,8 +34,28 @@ import java.util.*;
  *          安装类中注入的基础上再安装名称注入，它在给类成员注入时不能单独使用（需要配合Autowired使用），但是给方法参数注入时可以
  *          属性：
  *              value：用于指定注入bean的id
+ *      Resource
+ *          如果不想使用上面的，使用Resource注解 实现@Autowired+Qualifier的功能。按照bean的id进行注入
+ *          属性：
+ *              name：指定bean的id
+ *      以上三个注解注入都只能注入其它bean类型的数据，而基本类型和String类型注入无法使用上述注解实现
+ *      另外：集合类型的注入只能通过xml的方式实现
+ *      Value：
+ *          作用：用于注入基本类型和String类型的数据
+ *          属性：
+ *              value：用于指定数据的值，可以使用spring中的SpEL（也就是spring的el表达式）
+ *                  spEL的写法：${表达式}
+ *
  * 用于改变作用范围的
+ *      Scope
+ *          作用：用于指定bean的作用方位
+ *          属性：
+ *              value：常用取值：singleton（默认），prototype
  * 用于生命周期
+ *      PreDestroy
+ *          作用：用于指定销毁方法
+ *      PostConstruct
+ *          作用：用于指定初始方法
  */
 @Component
 public class AccountServiceImpl implements IAccountService {
@@ -43,8 +66,9 @@ public class AccountServiceImpl implements IAccountService {
     private Date birthday;
 
 
-    @Autowired
-    @Qualifier("accountDao05-1")
+   /* @Autowired
+    @Qualifier("accountDao5-2")*/
+    @Resource(name = "accountDao5-2")
     private IAccountDao accountDao05;
 
     /**
@@ -72,13 +96,6 @@ public class AccountServiceImpl implements IAccountService {
         accountDao05.saveAccount();
     }
 
-    public void init() {
-        System.out.println("init");
-    }
-
-    public void destroy() {
-        System.out.println("destroy");
-    }
 
     @Override
     public String toString() {
@@ -92,5 +109,15 @@ public class AccountServiceImpl implements IAccountService {
                 ", myMap=" + myMap +
                 ", myProps=" + myProps +
                 '}';
+    }
+
+    @PostConstruct
+    public void init() {
+        System.out.println("PostConstruct 初始化");
+    }
+
+    @PreDestroy
+    public void destroy() {
+        System.out.println("PreDestroy destroy");
     }
 }
