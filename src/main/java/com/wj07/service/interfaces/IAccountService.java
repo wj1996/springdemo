@@ -1,6 +1,6 @@
-package com.wj06.service.interfaces;
+package com.wj07.service.interfaces;
 
-import com.wj06.domain.Account;
+import com.wj07.domain.Account;
 
 import java.util.List;
 

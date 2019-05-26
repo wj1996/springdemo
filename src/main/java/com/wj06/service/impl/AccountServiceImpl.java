@@ -3,6 +3,7 @@ package com.wj06.service.impl;
 import com.wj06.dao.interfaces.IAccountDao;
 import com.wj06.domain.Account;
 import com.wj06.service.interfaces.IAccountService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class AccountServiceImpl implements IAccountService {
         this.accountDao = accountDao;
     }
 
-    public List<Account> findAllCount() {
+    public List<Account> findAllAccount() {
         return accountDao.findAllCount();
     }
 

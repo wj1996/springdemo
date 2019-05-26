@@ -155,4 +155,29 @@
     名称空间和约束中-->
     <context:component-scan base-package="com.wj05" />
     <bean id="accountDao5-2" class="com.wj05.dao.impl.AccountDaoImpl" />
+
+    <!--基于xml的IOC案例-->
+    <bean id="accountService06" class="com.wj06.service.impl.AccountServiceImpl">
+        <property name="accountDao" ref="accountDao06" />
+    </bean>
+    <bean id="accountDao06" class="com.wj06.dao.impl.AccountDaoImpl">
+        <!--注入QueryRunner-->
+        <property name="runner" ref="queryRunner" />
+    </bean>
+    <bean id="queryRunner" class="org.apache.commons.dbutils.QueryRunner" scope="prototype">
+        <constructor-arg name="ds" ref="dataSource" />
+    </bean>
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="com.mysql.jdbc.Driver" />
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3307/my" />
+        <property name="user" value="root" />
+        <property name="password" value="root" />
+    </bean>
+    <!--案例改造为基于注解的-->
+    <context:component-scan base-package="com.wj07" />
+    <bean id="queryRunner07" class="org.apache.commons.dbutils.QueryRunner" scope="prototype">
+        <constructor-arg name="ds" ref="dataSource" />
+    </bean>
+
+
 </beans>

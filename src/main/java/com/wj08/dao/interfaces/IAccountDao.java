@@ -1,12 +1,12 @@
-package com.wj06.service.interfaces;
+package com.wj08.dao.interfaces;
 
-import com.wj06.domain.Account;
+import com.wj08.domain.Account;
 
 import java.util.List;
 
-public interface IAccountService {
+public interface IAccountDao {
 
-    List<Account> findAllAccount();
+    List<Account> findAllCount();
 
     Account findAccountById(Integer accountId);
 
@@ -15,7 +15,4 @@ public interface IAccountService {
     void updateAccount(Account account);
 
     void deleteAccount(Integer accountId);
-
-
-
 }

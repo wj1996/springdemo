@@ -1,22 +1,24 @@
-package com.wj06.dao.impl;
+package com.wj08.dao.impl;
 
-import com.wj06.dao.interfaces.IAccountDao;
-import com.wj06.domain.Account;
+import com.wj08.dao.interfaces.IAccountDao;
+import com.wj08.domain.Account;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
 import java.util.List;
 
+@Repository("accountDao08")
 public class AccountDaoImpl implements IAccountDao {
 
 
+    @Autowired
+    @Qualifier("queryRunner08")
     private QueryRunner runner;
-
-    public void setRunner(QueryRunner runner) {
-        this.runner = runner;
-    }
 
     public List<Account> findAllCount() {
         try {

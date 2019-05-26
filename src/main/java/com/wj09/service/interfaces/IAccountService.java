@@ -1,6 +1,6 @@
-package com.wj06.service.interfaces;
+package com.wj09.service.interfaces;
 
-import com.wj06.domain.Account;
+import com.wj09.domain.Account;
 
 import java.util.List;
 
@@ -16,6 +16,6 @@ public interface IAccountService {
 
     void deleteAccount(Integer accountId);
 
-
+    void transfer(String sourceName,String targetName,Float money);
 
 }
