@@ -1,17 +1,18 @@
-package com.wj10.service.impl;
+package com.wj11.service.impl;
 
 
-import com.wj10.service.interfaces.IAccountService;
+import com.wj11.service.interfaces.IAccountService;
+import org.springframework.stereotype.Service;
 
 /**
- * Spring基于XML的AOP 实现
+ * Spring基于注解的AOP 实现
  */
+@Service("accountService11")
 public class AccountServiceImpl implements IAccountService {
 
 
     public void saveAccount() {
         System.out.println("save");
-//        int i = 1 / 0;
     }
 
     public void updateAccount(int i) {

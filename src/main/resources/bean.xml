@@ -270,8 +270,21 @@
         <!--配置切面-->
         <aop:aspect id="logAdvice" ref="logger">
             <!--配置通知的类型，并且建立通知方法和切入点方法的关联-->
-            <aop:before method="printLog" pointcut="execution(* com.wj10.service.impl.*.*(..))"></aop:before>
+<!--            <aop:before method="printLog" pointcut="execution(* com.wj10.service.impl.*.*(..))"></aop:before>-->
+            <!--切入点方法正常执行之后执行-->
+<!--            <aop:after-returning method="after" pointcut="execution(* com.wj10.service.impl.*.*(..))"></aop:after-returning>-->
+            <!--切入点方法执行异常之后执行-->
+<!--            <aop:after-throwing method="throwing" pointcut="execution(* com.wj10.service.impl.*.*(..))"></aop:after-throwing>-->
+            <!--无论切入点方法是否正常执行，都会最后被执行-->
+<!--            <aop:after method="fina"  pointcut="execution(* com.wj10.service.impl.*.*(..))"></aop:after>-->
+            
+            <!--配置环绕通知-->
+            <aop:around method="around" pointcut="execution(* com.wj10.service.impl.*.*(..))"></aop:around>
         </aop:aspect>
     </aop:config>
 
+    <!--11.基于注解的AOP实现-->
+    <context:component-scan base-package="com.wj11" />
+    <!--配置spring开启注解AOP的支持-->
+    <aop:aspectj-autoproxy />   <!--此处可以使用EnableAspectJAutoProxy注解替代-->
 </beans>
