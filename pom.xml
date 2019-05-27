@@ -40,6 +40,20 @@
             <artifactId>commons-dbutils</artifactId>
             <version>1.6</version>
         </dependency>
+        <!--基于子类的动态代理实现jar包依赖-->
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+
+        <!--spring基于xml的aop spring的任何运行都要基于IOC，所有也需要IOC相关的 这个就是用来读取切入点表达式相关的-->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.9.2</version>
+        </dependency>
+
     </dependencies>
 
 

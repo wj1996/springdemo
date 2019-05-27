@@ -13,6 +13,9 @@ public class ConnectionUtils {
 
     private DataSource dataSource;
 
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     public Connection getThreadLocalConnection() {
         Connection connection = tl.get();

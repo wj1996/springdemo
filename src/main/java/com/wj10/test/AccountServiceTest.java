@@ -1,6 +1,6 @@
-package com.wj09.test;
+package com.wj10.test;
 
-import com.wj09.service.interfaces.IAccountService;
+import com.wj10.service.interfaces.IAccountService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,29 +23,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 //@ContextConfiguration(classes = SpringConfiguration.class)
 @ContextConfiguration(locations = "classpath:bean.xml")
 public class AccountServiceTest {
-
-    /**
-     * 问题：
-     * 1.spring集成Junit内置属性使用set方式无效吗？
-     * 2.使用代理，debug测试时开启事务无效
-     *
-     */
-
-
-
-    @Autowired
-    @Qualifier("proxyAccountService09-2")
-    private IAccountService accountService09;
-
-    /*public void setAccountService09(IAccountService accountService09) {
-        this.accountService09 = accountService09;
-    }*/
-
-    @Test
-    public void testTransfer() {
-        System.out.println(accountService09);
-        accountService09.transfer("aa","bb",10f);
-    }
 
 
 
