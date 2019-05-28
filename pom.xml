@@ -54,6 +54,18 @@
             <version>1.9.2</version>
         </dependency>
 
+        <!--Spring JdbcTemplate的使用 需要数据库驱动包(上面已导入)，还需要spring-jdbc spring-tx -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>5.1.7.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>5.1.7.RELEASE</version>
+        </dependency>
+
     </dependencies>
 
 

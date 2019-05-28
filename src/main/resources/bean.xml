@@ -3,12 +3,15 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         https://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
         https://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/aop
-        https://www.springframework.org/schema/aop/spring-aop.xsd">
+        https://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx
+        https://www.springframework.org/schema/tx/spring-tx.xsd">
     <!--
         xmlns:context="http://www.springframework.org/schema/context" IOC注解方式实现 引入
     -->
@@ -19,6 +22,10 @@
         注意写法：
         http://www.springframework.org/schema/aop
         https://www.springframework.org/schema/aop/spring-aop.xsd
+    -->
+    <!--
+        spring 基于XML的事务支持
+        xmlns:tx="http://www.springframework.org/schema/tx"
     -->
     <bean id="accountService" class="com.wj02.service.impl.AccountServiceImpl"></bean>
     <bean id="accountDao" class="com.wj02.dao.impl.AccountDaoImpl" />
@@ -287,4 +294,95 @@
     <context:component-scan base-package="com.wj11" />
     <!--配置spring开启注解AOP的支持-->
     <aop:aspectj-autoproxy />   <!--此处可以使用EnableAspectJAutoProxy注解替代-->
+
+    <!--12.springJdbcTemplate的配置-->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="ds2" />
+    </bean>
+    <bean id="ds2" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost:3307/my" />
+        <property name="username" value="root" />
+        <property name="password" value="root" />
+    </bean>
+    <!--12.2 持久层结合JdbcTemplate-->
+    <bean id="accountDao12" class="com.wj12.dao.impl.AccountDaoImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
+    <!--12.3代码优化-->
+    <bean id="accountDao12-2" class="com.wj12.dao.impl.AccountDao2Impl">
+        <property name="dataSource" ref="ds2" />
+    </bean>
+    <!--13.spring事务 转账代码-->
+    <bean id="accountDao13" class="com.wj13.dao.impl.AccountDaoImpl">
+        <property name="dataSource" ref="ds2" />
+    </bean>
+    <bean id="accountService13" class="com.wj13.service.impl.AccountServiceImpl">
+        <property name="accountDao" ref="accountDao13" />
+    </bean>
+    <!--spring中基于xml的声明式事务控制配置设置 需要导入事务的约束-->
+    <!--
+        1、配置事务管理器
+        2.配置事务的通知
+            使用tx:advice标签配置事务通知
+                属性：
+                    id:给事务通知起一个唯一标识
+                    transaction-manager：给事务通知提供一个事务管理器引用
+         3.配置AOP中的通用切入点表达式
+         4.建立切入点表达式和事务通知的对应关系
+         5.配置事务的属性
+            是在事务的通知tx:advice标签内部
+     -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="ds2" />
+    </bean>
+    <!--配置事务的通知-->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <!--配置事务的属性
+            isolation:指定事务的隔离级别，默认值是DEFAULT，表示使用数据库的默认隔离级别
+            no-rollback-for：用于指定一个异常，当产生该异常时，事务不会滚，产生其它异常时，
+                事务回滚，没有默认值，表示任何异常都回滚。
+            rollback-for：用于指定一个异常，当产生该异常时，事务回滚，产生其它异常时，事务不回滚
+                    没有默认值，表示任何异常都回滚。
+            propagation:用于指定事务的传播行为，默认值是REQUIRED，表示一定会有事务。增删改的选择，
+                查询方法可以选择SUPPORTS
+            read-only：用于指定事务是否只读，只有查询方法才能设置为true，默认值是false，表示读写
+            timeout:用于指定事务的超时时间，默认值是-1，表示永不超时，指定的值以秒为单位
+        -->
+        <tx:attributes>
+            <tx:method name="transfer" propagation="REQUIRED" read-only="false"/>
+        </tx:attributes>
+    </tx:advice>
+    <aop:config>
+        <aop:pointcut id="pt1" expression="execution(* com.wj13.service.impl.*.*(..))"></aop:pointcut>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="pt1" />
+    </aop:config>
+
+    <!--09中采用动态代理实现的事务控制改为配置AOP实现-->
+    <bean id="myTC" class="com.wj09.factory.BeanFactory" >
+        <property name="txManager" ref="txManager" />
+        <property name="accountService" ref="accountService09-2" />
+    </bean>
+    <aop:config>
+        <aop:aspect id="tcAdvice" ref="myTC">
+            <aop:before method="beginTransaction" pointcut="execution(* com.wj09.service.impl.AccountService2Impl.*(..))" />
+            <aop:after-returning method="commit" pointcut="execution(* com.wj09.service.impl.AccountService2Impl.*(..))" />
+            <aop:after-throwing method="rollback" pointcut="execution(* com.wj09.service.impl.AccountService2Impl.*(..))" />
+            <aop:after method="close" pointcut="execution(* com.wj09.service.impl.AccountService2Impl.*(..))" />
+        </aop:aspect>
+    </aop:config>
+    <!--14.使用注解的方式配置spring的事务
+        基于注解的声明式事务配置
+            1. 配置事务管理器
+            2. 开启spring对注解事务的支持 tx:annotation-driven
+            3. 在需要事务支持的地方使用@Transactional注解
+
+    -->
+    <bean id="jdbcTemplate2" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="ds2" />
+    </bean>
+    <context:component-scan base-package="com.wj14" />
+    <!--注意：这个里面使用的transactionManger中的dataSource要和JdbcTempalte中使用的数据库源一定要一致-->
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
 </beans>

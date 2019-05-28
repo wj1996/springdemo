@@ -3,22 +3,22 @@ package com.wj09.service.impl;
 import com.wj09.dao.interfaces.IAccountDao;
 import com.wj09.domain.Account;
 import com.wj09.service.interfaces.IAccountService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
- * 案例完善（转账方法引入）
- * 事务的控制都在业务层  
+ * 基于注解的AOP实现
  */
-public class AccountService2Impl implements IAccountService {
+@Service("accountService09-3")
+public class AccountService3Impl implements IAccountService {
 
 
 
+    @Autowired
     private IAccountDao accountDao09;
 
-    public void setAccountDao09(IAccountDao accountDao09) {
-        this.accountDao09 = accountDao09;
-    }
 
 
     public List<Account> findAllAccount() {

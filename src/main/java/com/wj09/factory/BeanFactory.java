@@ -55,4 +55,36 @@ public class BeanFactory {
                     }
                 });
     }
+
+    /**
+     * 开启事务（前置）
+     */
+    public void beginTransaction() {
+        System.out.println("begin");
+        txManager.beginTransaction();
+    }
+
+    /**
+     * 提交事务（后置）
+     */
+    public void commit() {
+        System.out.println("commit");
+        txManager.commit();
+    }
+
+    /**
+     * 回滚事务（异常）
+     */
+    public void rollback() {
+        System.out.println("rollback");
+        txManager.rollback();
+    }
+
+    /**
+     * 关闭资源（最终）
+     */
+    public void close() {
+        System.out.println("close");
+        txManager.relaese();
+    }
 }
